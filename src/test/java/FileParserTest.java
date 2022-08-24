@@ -37,56 +37,55 @@ public class FileParserTest {
     @DisplayName("Check pdf from zip")
     @Test
     void parseZipPdfTest() throws Exception {
-        InputStream pdfFileStream = getFileFromArchive(pdfName);
-        PDF pdf = new PDF(pdfFileStream);
-        assertThat(pdf.numberOfPages).isEqualTo(2);
-        assertThat(pdf.text).containsAnyOf("A Simple PDF File");
+        try (InputStream pdfFileStream = getFileFromArchive(pdfName)) {
+            PDF pdf = new PDF(pdfFileStream);
+            assertThat(pdf.numberOfPages).isEqualTo(2);
+            assertThat(pdf.text).containsAnyOf("A Simple PDF File");
+        }
     }
 
 
     @DisplayName("Check csv from zip")
     @Test
     void parseZipCsvTest() throws Exception {
-        InputStream csvFileStream = getFileFromArchive(cvcName);
-        CSVReader csvReader = new CSVReader(new InputStreamReader(csvFileStream, UTF_8));
-        List<String[]> csv = csvReader.readAll();
-        assertThat(csv).contains(
-                new String[]{"1", "Dulce", "Abril", "Female", "United States", "32", "15/10/2017", "1562"});
+        try (InputStream csvFileStream = getFileFromArchive(cvcName)) {
+            CSVReader csvReader = new CSVReader(new InputStreamReader(csvFileStream, UTF_8));
+            List<String[]> csv = csvReader.readAll();
+            assertThat(csv).contains(
+                    new String[]{"1", "Dulce", "Abril", "Female", "United States", "32", "15/10/2017", "1562"});
+        }
     }
 
 
     @DisplayName("Check xls from zip")
     @Test
     void parseZipXlsTest() throws Exception {
-        InputStream xlsFileStream = getFileFromArchive(xlsName);
-        XLS xls = new XLS(xlsFileStream);
-        assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(6).getStringCellValue()).contains("16/08/2016");
-        assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(0).getNumericCellValue()).isEqualTo(13);
-        assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(1).getStringCellValue()).contains("Sherron");
-        assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(2).getStringCellValue()).contains("Ascencio");
-        assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(3).getStringCellValue()).contains("Female");
-        assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(4).getStringCellValue()).contains("Great Britain");
-        assertThat((xls.excel.getSheetAt(0).getRow(13).getCell(5).getNumericCellValue())).isEqualTo(32.0);
-        assertThat((xls.excel.getSheetAt(0).getRow(13).getCell(7).getNumericCellValue())).isEqualTo(3256.0);
-        assertThat(xls.excel.getSheetAt(0).getPhysicalNumberOfRows()).isEqualTo(51);
+        try (InputStream xlsFileStream = getFileFromArchive(xlsName)) {
+            XLS xls = new XLS(xlsFileStream);
+            assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(6).getStringCellValue()).contains("16/08/2016");
+            assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(0).getNumericCellValue()).isEqualTo(13);
+            assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(1).getStringCellValue()).contains("Sherron");
+            assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(2).getStringCellValue()).contains("Ascencio");
+            assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(3).getStringCellValue()).contains("Female");
+            assertThat(xls.excel.getSheetAt(0).getRow(13).getCell(4).getStringCellValue()).contains("Great Britain");
+            assertThat((xls.excel.getSheetAt(0).getRow(13).getCell(5).getNumericCellValue())).isEqualTo(32.0);
+            assertThat((xls.excel.getSheetAt(0).getRow(13).getCell(7).getNumericCellValue())).isEqualTo(3256.0);
+            assertThat(xls.excel.getSheetAt(0).getPhysicalNumberOfRows()).isEqualTo(51);
+        }
     }
 
     @DisplayName("Check json test")
     @Test
     void parseJsonTest() throws IOException {
-        InputStream is = classLoader.getResourceAsStream("game.json");
-
-
-        ObjectMapper mapper = new ObjectMapper();
-        Games games = mapper.readValue(is, Games.class);
-        String[] functions = new String[]{"buy", "setup", "update", "delete", "open", "close"};
-        assertThat(games.getName()).isEqualTo("Witcher");
-        assertThat(games.isAvailable());
-        assertThat(games.getPrice()).isEqualTo(132);
-        assertThat(games.getVersion()).isEqualTo(3.0);
-        assertThat(games.getFunctions()).isEqualTo(functions);
-
-
+        try (InputStream is = classLoader.getResourceAsStream("game.json")) {
+            ObjectMapper mapper = new ObjectMapper();
+            Games games = mapper.readValue(is, Games.class);
+            String[] functions = new String[]{"buy", "setup", "update", "delete", "open", "close"};
+            assertThat(games.getName()).isEqualTo("Witcher");
+            assertThat(games.isAvailable());
+            assertThat(games.getPrice()).isEqualTo(132);
+            assertThat(games.getVersion()).isEqualTo(3.0);
+            assertThat(games.getFunctions()).isEqualTo(functions);
+        }
     }
-
 }
