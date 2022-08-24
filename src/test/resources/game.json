@@ -1,0 +1,7 @@
+{
+  "name": "Witcher",
+  "price": 132,
+  "available": true,
+  "version": 3.0,
+  "functions": ["buy","setup","update","delete", "open", "close"]
+}
